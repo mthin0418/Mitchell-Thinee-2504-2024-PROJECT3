@@ -19,58 +19,64 @@ method_mapping = Dict("PI" => "Property passed in",
 
 
 
-# Histogram of Price
-#histogram(df.Price, bins=20, xlabel="Price", ylabel="Count", title="Distribution of Property Prices")
+#Histogram of Price
+histogram(df.Price, bins=20, xlabel="Price", ylabel="Count", title="Distribution of Property Prices")
 
-#scatter(df.Rooms, df.Price, xlabel="Number of Rooms", ylabel="Price", title="Price vs. Number of Rooms")
+scatter(df.Rooms, df.Price, xlabel="Number of Rooms", ylabel="Price", title="Price vs. Number of Rooms")
 
-#boxplot(df.Distance, df.Price, xlabel="Distance", ylabel="Price", title="Price by Distance")
+# Filter out rows with missing values in either Distance or Price
+# filtered_df = dropmissing(df, [:Distance, :Price])
 
-# grouped_df = combine(groupby(df, [:Rooms, :Method]), 
+# # Create a box plot with the filtered data
+histogram(filtered_df.Distance, filtered_df.Price,
+    xlabel="Distance", ylabel="Price",
+    title="Price by Distance", label = "")
+
+
+# using StatsPlots
+
+# Group by Distance and calculate average prices
+# grouped_df = combine(groupby(df, :Distance), :Price => (x -> mean(skipmissing(x))) => :AvgPrice)
+
+# # Create a bar plot for average price by distance
+# scatter(grouped_df.Distance, grouped_df.AvgPrice,
+#     xlabel = "Distance (km)", ylabel = "Average Price (AUD)",
+#     title = "Average Price by Distance",
+#     legend = false)
+
+    # Specify bins that match the unique values in Distance
+# bins = 0:1:maximum(grouped_df.Distance)  # Adjust as necessary for your data
+
+# Create a histogram with specified bins
+# histogram(grouped_df.Distance, bins = bins, legend=false,
+#     xlabel = "Distance (km)", ylabel = "Frequency",
+#     title = "Frequency of Distance")
+
+#     # Create a line plot with average prices by distance
+# plot(grouped_df.Distance, grouped_df.AvgPrice,
+# xlabel = "Distance (km)", ylabel = "Average Price (AUD)",
+# title = "Average Price by Distance",
+# legend = false, marker = :circle)
+
+# # Create a box plot with the cleaned data
+# scatter(cleaned_df.Distance, cleaned_df.Price,
+#     xlabel = "Distance (km)", ylabel = "Price (AUD)", title = "Price by Distance", label = "")
+
+    
+# Group the data and calculate average price, skipping missing values
+# rooms_methods_df = combine(groupby(df, [:Rooms, :Method]), 
 #                      :Price => (x -> mean(skipmissing(x))) => :AvgPrice)
 
-# Plot with custom method names
-# bar(grouped_df.Rooms, grouped_df.AvgPrice, group=grouped_df.Method, 
-#     xlabel="Rooms", ylabel="Average Price", 
-#     title="Average Price by Rooms and Method (Skipping Missing)",
-#     titlefontsize=11)  # Adjust title size here
-
-
-
-# Group the data and calculate average price, skipping missing values
-rooms_methods_df = combine(groupby(df, [:Rooms, :Method]), 
-                     :Price => (x -> mean(skipmissing(x))) => :AvgPrice)
-
-# Maps the abbreviated method names to full names
-full_method_names = [method_mapping[m] for m in rooms_methods_df.Method]
+# # Maps the abbreviated method names to full names
+# full_method_names = [method_mapping[m] for m in rooms_methods_df.Method]
 
 # Creates the bar plot
-bar(rooms_methods_df.Rooms, rooms_methods_df.AvgPrice, group=full_method_names, 
-    xlabel="Number of Rooms", ylabel="Average Price (AUD)", 
-    title="Average Price by Rooms and Method of Sale",
-    titlefontsize=11, legend=:topleft, legendfontsize=9)  # Adjust title size here
-                    
+# bar(rooms_methods_df.Rooms, rooms_methods_df.AvgPrice, group=full_method_names, 
+#     xlabel="Number of Rooms", ylabel="Average Price (AUD)", 
+#     title="Average Price by Rooms and Method of Sale",
+#     titlefontsize=11, legend=:topleft, legendfontsize=9)  # Adjust title size here
+                  
 
-# Get the unique methods in your DataFrame
-# unique_methods = unique(grouped_df.Method)
-
-# # Create a dictionary that maps each unique method to its custom label
-# method_label_map = Dict(unique_methods[i] => method_labels[i] for i in 1:length(unique_methods))
-
-# Bar plot with custom labels for each method in the legend
-# bar(grouped_df.Rooms, grouped_df.AvgPrice, group=grouped_df.Method, 
-#     label=[method_label_map[m] for m in grouped_df.Method],  # Assign labels based on method
-#     xlabel="Rooms", ylabel="Average Price", 
-#     title="Average Price by Rooms and Method (Skipping Missing)",
-#     titlefontsize=14)
-
-
-
-#     # Bar plot using StatsPlots
-# @df grouped_df bar(:Rooms, :AvgPrice, group=:Method, 
-# xlabel="Rooms", ylabel="Average Price", 
-# title="Average Price by Rooms and Method (Skipping Missing)", 
-# label=[method_label_map[m] for m in grouped_df.Method], legend=:topright)
 # # ## Landsize compared to number of Rooms
 # scatter(df.Rooms, df.Landsize,
 #     xlabel = "Number of Rooms",
@@ -83,24 +89,6 @@ bar(rooms_methods_df.Rooms, rooms_methods_df.AvgPrice, group=full_method_names,
 #     ylabel =  "Price (AUD)",
 #     title = "Price Vs Number of Rooms in a Property",
 #     legend = false)
-
-
-    # begin
-    #     p1 = plot(USdata.Quarters, [USdata.GDP  USdata.INV  USdata.M2])
-    #     restyle!(p1, 
-    #         name = ["GDP"  "INV"  "M2"],
-    #         line_color = ["BlueViolet" "maroon" "navy"]) # any other colors will do
-    #     relayout!(p1, 
-    #         title_text = "My title using relayout but you can do it with Layout", 
-    #         title_x = 0.5, # centers the title
-    #         xaxis_title = "Quarters", yaxis_title = " Billion dollars", 
-    #         height = 450, width = 900) # in PlutoPlotly default will be height=400, width=Pluto window width
-    #     p1
-    # end
-
-
-    # df_rooms = dataset(df, df.Rooms)
-    # plot(df_rooms, x=:total_bill, kind="histogram")
 
 
     
